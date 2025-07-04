@@ -1,53 +1,65 @@
-### 🧠 Syntax
+### ✅ `useMemo` in React — Meaning and Usage
+
+`useMemo` is a **React Hook** used to **optimize performance** by **memoizing** (caching) the result of an expensive function **so it's only recalculated when necessary**.
+
+---
+
+### 🔧 Syntax:
 
 ```jsx
 const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
 ```
 
----
-
-### 🔍 Parameters
-
-1. **Function**: `() => computeExpensiveValue(a, b)`
-
-   * This is the **function** that returns the value you want to memoize.
-2. **Dependency array**: `[a, b]`
-
-   * Recalculates only if one of the dependencies changes.
+* `computeExpensiveValue(a, b)` is the function whose result you want to **memoize**.
+* `[a, b]` is the **dependency array**.
+* React will **only recompute** the value when `a` or `b` **change**.
+* If `a` and `b` don't change, React uses the **cached value**.
 
 ---
 
-### 📦 Example
+### 🧠 When to Use `useMemo`:
+
+Use `useMemo` when:
+
+* You have a **slow or expensive calculation**.
+* The result doesn’t need to change on every render.
+* You're passing values to **memoized components** (like `React.memo`) and want to prevent unnecessary re-renders.
+
+---
+
+### 📌 Example:
 
 ```jsx
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-function ExpensiveComponent({ items }) {
-  const sortedItems = useMemo(() => {
-    console.log('Sorting items...');
-    return items.sort((a, b) => a - b);
-  }, [items]);
+function App() {
+  const [count, setCount] = useState(0);
+  const [other, setOther] = useState(0);
+
+  const expensiveComputation = (num) => {
+    console.log("Calculating...");
+    return num * 1000;
+  };
+
+  const memoizedResult = useMemo(() => expensiveComputation(count), [count]);
 
   return (
-    <ul>
-      {sortedItems.map(item => <li key={item}>{item}</li>)}
-    </ul>
+    <div>
+      <p>Result: {memoizedResult}</p>
+      <button onClick={() => setCount(count + 1)}>Increase Count</button>
+      <button onClick={() => setOther(other + 1)}>Change Other</button>
+    </div>
   );
 }
 ```
 
-In this example:
+### 🔍 Explanation:
 
-* The list is only re-sorted if `items` changes.
-* This avoids unnecessary re-sorting on every render.
-
----
-
-### ⚠️ When to Use
-
-* Use it for **expensive computations** that shouldn't rerun every render.
-* **Don't overuse** it — unnecessary memoization can lead to complex and hard-to-maintain code.
+* `expensiveComputation(count)` will only run **when `count` changes**.
+* Changing `other` will not trigger recomputation.
 
 ---
 
-Would you like an example comparing performance with and without `useMemo`?
+### 🚫 Common Mistake:
+
+If you **omit** dependencies from the dependency array, `useMemo` might not update when it should, leading to **stale or incorrect values**.
