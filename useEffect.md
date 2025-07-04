@@ -28,6 +28,14 @@ useEffect(() => {
   * **Empty (`[]`)**: Runs **only once** on mount.
   * **\[x, y]**: Runs on mount + when **x or y change**.
 
+const [count, setCount] = useState(0);
+
+### ✅ Meaning of Omitted
+```jsx
+useEffect(() => {
+  console.log(count); // <-- using `count`
+}, []); // `count` is omitted here
+```
 ---
 
 ### ✅ Example 1 – Run Once (on mount)
